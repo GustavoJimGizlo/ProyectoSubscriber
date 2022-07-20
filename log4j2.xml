@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="WARN" monitorInterval="30">
+	<Properties>
+		<Property name="logPath">/log</Property>
+		<Property name="logSize">100MB</Property>
+		<Property name="rollingFileName">FileAppender</Property>
+		<Property name="consoleAppenderName">ConsoleAppender</Property>
+		<Property name="serviceName">subscriber</Property>
+		<Property name="packageName">com.conecel.claro</Property>
+		<Property name="LOG_PATTERN">
+			[%X{id}][%d{yyyy-MM-dd HH:mm:ss.SSS}][%p][%c:%L][%M] - %msg%n
+		</Property>
+	</Properties>
+	<Appenders>
+		<Console name="${consoleAppenderName}" target="SYSTEM_OUT"
+			follow="true">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</Console>
+		<!-- Rolling File Appender -->
+		<RollingFile name="${rollingFileName}"
+			fileName="${logPath}/${serviceName}.log"
+			filePattern="${logPath}/${serviceName}-%d{yyyy-MM}-%i.log.log"
+			ignoreExceptions="false">
+			<PatternLayout>
+				<Pattern>${LOG_PATTERN}</Pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy
+					size="${logSize}" />
+			</Policies>
+			<DefaultRolloverStrategy max="4" />
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		<AsyncLogger name="${packageName}" level="debug"
+			includeLocation="true">
+			<AppenderRef ref="${rollingFileName}" />
+		</AsyncLogger>
+		<Root level="info">
+			<AppenderRef ref="${consoleAppenderName}" />
+		</Root>
+	</Loggers>
+</Configuration>
